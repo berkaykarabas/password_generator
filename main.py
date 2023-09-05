@@ -40,7 +40,7 @@ def save():
         }
     }
     if len(website_write) == 0 or len(password_write) == 0 or len(email_write) == 0:
-        messagebox.showinfo(title="Somethings wrong!", message=f"please write all fields")
+        messagebox.showinfo(title="Somethings wrong!", message="please write all fields")
     else:
         try:
             with open("data.json", mode="r") as data_file:
@@ -56,6 +56,22 @@ def save():
             website_entry.delete(0, END)
             password_entry.delete(0, END)
 
+def search():
+    website = website_entry.get()
+    try:
+        with open("data.json",mode="r") as file:
+            old_data = json.load(file)
+            in_json = old_data[website]
+            my_password=in_json['password:']
+            for i in old_data:
+                if i == website:
+                    messagebox.showinfo(title="Old Data",
+                                        message=f"{i}\n {in_json['email:']}\n {my_password}"),
+    except KeyError:
+        if len(website) == 0:
+            messagebox.showinfo(title="Somethings wrong!", message="please write valid website")
+    except FileNotFoundError:   
+        messagebox.showinfo(title="Not Found", message="please add account!")
 
 # ---------------------------- UI SETUP ------------------------------- #
 
@@ -75,18 +91,19 @@ password_label = Label(text="Password :")
 password_label.grid(row=3, column=0)
 
 # Entries
-website_entry = Entry(width=35)
-website_entry.grid(column=1, row=1, columnspan=2)
+website_entry = Entry(width=21)
+website_entry.grid(column=1, row=1,)
 website_entry.focus()
-email_username_entry = Entry(width=35)
-email_username_entry.grid(row=2, column=1, columnspan=2)
-email_username_entry.insert(0, "berkay.karabas091@gmail.com")
+email_username_entry = Entry(width=50)
+email_username_entry.grid(row=2, column=1,columnspan=2)
+email_username_entry.insert(index=0, string="berkay.karabas091@gmail.com")
 password_entry = Entry(width=21)
 password_entry.grid(row=3, column=1)
 
 generate_password = Button(text="Generate Password", command=generator)
 generate_password.grid(column=2, row=3)
-
+search_button = Button(text="Search", command=search,width=13)
+search_button.grid(row=1, column=2)
 add_button = Button(width=35, text="Add", command=save)
 add_button.grid(row=4, column=1, columnspan=2)
 window.mainloop()
